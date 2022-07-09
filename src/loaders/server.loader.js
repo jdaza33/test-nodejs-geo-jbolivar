@@ -2,6 +2,8 @@
  * @description Server
  */
 
+require('dotenv').config()
+
 // Modules
 const express = require('express')
 const cors = require('cors')
@@ -16,29 +18,31 @@ const { errorHandler } = require('../middlewares/error.middleware')
 const router = require('../routes/router')
 
 const startExpress = () => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      //APP
-      const app = express()
+  //APP
+  const app = express()
 
-      //Middlewares
-      app.use(cors())
-      app.use(helmet())
-      app.use(express.json())
-      app.use(paginate.middleware(10, 50))
-      app.use(compression())
+  //Middlewares
+  app.use(cors())
+  app.use(helmet())
+  app.use(express.json())
+  app.use(paginate.middleware(10, 50))
+  app.use(compression())
 
-      //Router
-      app.use('/', router)
+  //Router
+  app.use('/', router)
 
-      //Error
-      app.use(errorHandler)
+  //Error
+  app.use(errorHandler)
 
-      return resolve(app)
-    } catch (error) {
-      return reject(error)
-    }
-  })
+  return app
 }
 
-module.exports = { startExpress }
+const startExpressTest = () => {
+  const app = startExpress()
+  app.listen(process.env.PORT, () =>
+    console.log(`Test listening on port ${process.env.PORT}`)
+  )
+  return app
+}
+
+module.exports = { startExpress, startExpressTest }

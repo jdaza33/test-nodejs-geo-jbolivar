@@ -15,6 +15,9 @@ const BikeSchema = new Schema({
   latitude: { type: Number, unique: false, required: true },
   longitude: { type: Number, unique: false, required: true },
   status: { type: Boolean, default: true },
+  point: { type: Object },
 })
+
+BikeSchema.index({ point: '2dsphere' })
 
 module.exports = mongoose.model('Bikes', BikeSchema)

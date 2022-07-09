@@ -15,7 +15,7 @@ const init = () => {
       await startLogger()
       await startMongoose()
 
-      const app = await startExpress()
+      const app = startExpress()
 
       return resolve(app)
     } catch (error) {

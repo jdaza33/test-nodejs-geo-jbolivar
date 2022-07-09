@@ -16,7 +16,22 @@ const bikesDb = require('../utils/nomeclatura.db.json')
 const listBikes = (filters = {}) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const bike = await Bike.findOne(filters)
+      const { latitude, longitude, distance } = filters
+
+      if (!latitude || !longitude || !distance)
+        return reject('Falta algun dato (latitude, longitude, distance)')
+
+      const bike = await Bike.find({
+        point: {
+          $near: {
+            $geometry: {
+              type: 'Point',
+              coordinates: [parseFloat(longitude), parseFloat(latitude)],
+            },
+            $maxDistance: parseFloat(distance),
+          },
+        },
+      })
       return resolve(bike)
     } catch (error) {
       return reject(error)
@@ -36,9 +51,14 @@ const insertBikesInitial = () => {
           return {
             ...bike,
             status: bike.status === 'IN_SERVICE' ? true : false,
+            point: {
+              type: 'Point',
+              coordinates: [bike.longitude, bike.latitude],
+            },
           }
         })
       )
+
       return resolve()
     } catch (error) {
       return reject(error)

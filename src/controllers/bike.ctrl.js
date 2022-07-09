@@ -7,7 +7,7 @@ const { listBikes, insertBikesInitial } = require('../services/bike.srv')
 
 const listBikesNearby = async (req, res, next) => {
   try {
-    const bikes = await listBikes()
+    const bikes = await listBikes(req.query)
     res.json({ success: true, bikes })
   } catch (error) {
     next(error)
